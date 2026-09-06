@@ -32,7 +32,7 @@ opentelemetry-sdk>=1.20.0
 # ── Database (async) ──
 sqlalchemy[asyncio]>=2.0.0
 aiosqlite>=0.20.0          # SQLite async driver (local dev)
-# asyncpg>=0.30.0          # PostgreSQL async driver (production — uncomment if needed)
+asyncpg>=0.30.0           # PostgreSQL async driver (production)
 
 # ── Authentication (JWT) ──
 python-jose[cryptography]>=3.3.0
