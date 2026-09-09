@@ -44,3 +44,4 @@ def get_openai_client():
     except Exception as e:
         logger.error(f"Failed to create Groq client: {e}", exc_info=True)
         return None
+
