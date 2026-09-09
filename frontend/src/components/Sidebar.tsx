@@ -84,10 +84,10 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 {/* Bottom Profile Section */}
                 <div className="px-3 py-3 border-t border-jarvis-border flex items-center gap-3 cursor-pointer hover:bg-jarvis-surface/50 rounded-[8px] transition-all duration-150 group mt-2">
                     <div className="w-10 h-10 rounded-full bg-jarvis-panel flex items-center justify-center border border-jarvis-border shadow-sm overflow-hidden ring-2 ring-transparent group-hover:ring-jarvis-accent-primary/30 transition-all">
-                        <img src="https://ui-avatars.com/api/?name=Om+Jain&background=0078D4&color=fff&bold=true&font-size=0.4" alt="OJ" className="w-full h-full object-cover" />
+                        <img src="https://ui-avatars.com/api/?name=Krish+Sahu&background=0078D4&color=fff&bold=true&font-size=0.4" alt="KS" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex flex-col text-left">
-                        <span className="text-[13px] font-medium text-jarvis-text/90 group-hover:text-jarvis-text transition-colors">Om Jain</span>
+                        <span className="text-[13px] font-medium text-jarvis-text/90 group-hover:text-jarvis-text transition-colors">Krish Sahu</span>
                         <span className="text-[11px] text-jarvis-muted font-light tracking-wide">Workspace Admin</span>
                     </div>
                 </div>
