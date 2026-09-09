@@ -46,3 +46,4 @@ services:
         value: INFO
       - key: ALLOWED_ORIGINS
         value: "*"
+
