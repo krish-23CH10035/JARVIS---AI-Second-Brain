@@ -459,7 +459,7 @@ async def create_task(request: TaskCreateRequest, user_id: str = "demo_user"):
     due_dt = None
     if request.due_date:
         try:
-            due_dt = datetime.fromisoformat(request.due_date.replace("Z", "+00:00"))
+            due_dt = datetime.fromisoformat(request.due_date.replace("Z", "+00:00")).replace(tzinfo=None)
         except ValueError:
             raise HTTPException(status_code=400, detail=f"Invalid date format: {request.due_date}")
 

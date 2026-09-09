@@ -45,8 +45,8 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     preferences = Column(JSON, default=dict)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
+    updated_at = Column(DateTime, default=lambda: datetime.utcnow(), onupdate=lambda: datetime.utcnow())
 
     documents = relationship("Document", back_populates="user", cascade="all, delete-orphan")
     tasks = relationship("Task", back_populates="user", cascade="all, delete-orphan")
@@ -69,7 +69,7 @@ class Document(Base):
     status = Column(String(50), default="uploaded")  # uploaded | parsing | chunking | embedding | indexed | failed
     chunk_count = Column(Integer, default=0)
     metadata_ = Column("metadata", JSON, default=dict)
-    uploaded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    uploaded_at = Column(DateTime, default=lambda: datetime.utcnow())
     processed_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="documents")
@@ -85,7 +85,7 @@ class Task(Base):
     priority = Column(Integer, default=0)  # 0=low, 1=medium, 2=high
     status = Column(String(50), default="pending")  # pending | in_progress | completed | cancelled
     due_date = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
     completed_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="tasks")
@@ -100,7 +100,7 @@ class Reminder(Base):
     message = Column(Text, default="")
     remind_at = Column(DateTime, nullable=False)
     is_sent = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     user = relationship("User", back_populates="reminders")
 
@@ -116,7 +116,7 @@ class Habit(Base):
     streak = Column(Integer, default=0)
     total_completions = Column(Integer, default=0)
     last_completed = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     user = relationship("User", back_populates="habits")
     logs = relationship("HabitLog", back_populates="habit", cascade="all, delete-orphan")
@@ -127,7 +127,7 @@ class HabitLog(Base):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     habit_id = Column(String, ForeignKey("habits.id"), nullable=False)
-    completed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    completed_at = Column(DateTime, default=lambda: datetime.utcnow())
     notes = Column(Text, default="")
 
     habit = relationship("Habit", back_populates="logs")
@@ -143,7 +143,7 @@ class Contact(Base):
     phone = Column(String(50), nullable=True)
     relationship_ = Column("relationship", String(100), default="")
     notes = Column(Text, default="")
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     user = relationship("User", back_populates="contacts")
 
@@ -159,7 +159,7 @@ class CalendarEvent(Base):
     end_time = Column(DateTime, nullable=True)
     is_recurring = Column(Boolean, default=False)
     recurrence_rule = Column(String(255), default="")
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     user = relationship("User", back_populates="calendar_events")
 
@@ -174,7 +174,7 @@ class Goal(Base):
     target_date = Column(DateTime, nullable=True)
     status = Column(String(50), default="active")  # active | completed | abandoned
     progress = Column(Float, default=0.0)  # 0.0 to 1.0
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())
 
     user = relationship("User", back_populates="goals")
 
@@ -184,7 +184,7 @@ class Session(Base):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    started_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    started_at = Column(DateTime, default=lambda: datetime.utcnow())
     ended_at = Column(DateTime, nullable=True)
     summary = Column(Text, default="")
     messages = Column(JSON, default=list)
