@@ -173,7 +173,7 @@ async def health_check():
         status="healthy",
         version="1.0.0",
         uptime_seconds=round(time.time() - _start_time, 2),
-        services=settings.validate_azure_services(),
+        services=settings.validate_core_services(),
     )
 
 
@@ -184,7 +184,7 @@ async def system_status():
         "app_name": settings.app.app_name,
         "debug": settings.app.debug,
         "database": settings.database.database_url.split("///")[0] + "///***",
-        "services": settings.validate_azure_services(),
+        "services": settings.validate_core_services(),
         "workflow_ready": workflow is not None and workflow._initialized,
     }
 

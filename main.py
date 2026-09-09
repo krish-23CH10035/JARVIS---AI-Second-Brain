@@ -112,14 +112,14 @@ def main() -> None:
     """)
 
     # Validate configuration
-    services = settings.validate_azure_services()
+    services = settings.validate_core_services()
     configured = [k for k, v in services.items() if v]
     missing = [k for k, v in services.items() if not v]
 
     if configured:
-        logger.info(f"Azure services configured: {', '.join(configured)}")
+        logger.info(f"Core services configured: {', '.join(configured)}")
     if missing:
-        logger.warning(f"Azure services NOT configured: {', '.join(missing)}")
+        logger.warning(f"Core services NOT configured: {', '.join(missing)}")
 
     if args.cli:
         asyncio.run(interactive_cli())

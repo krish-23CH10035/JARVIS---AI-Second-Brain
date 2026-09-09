@@ -19,7 +19,7 @@ class MemoryManager:
 
     def __init__(self):
         self.structured_db = StructuredDB()
-        self.vector_db = VectorDB()
+        self.vector_db = VectorDB(async_session=self.structured_db.async_session)
         self._embedding_client = None
 
     async def initialize(self):
@@ -35,34 +35,28 @@ class MemoryManager:
     # ── Embedding Generation ──
 
     def _get_embedding_client(self):
-        """Lazy-initialize the Azure OpenAI embedding client."""
+        """Lazy-initialize the Cohere embedding client."""
         if self._embedding_client is None:
-            from openai import AzureOpenAI
-            from app.utils.azure_llm import _normalize_azure_endpoint
-
-            self._embedding_client = AzureOpenAI(
-                azure_endpoint=_normalize_azure_endpoint(settings.azure_openai.endpoint),
-                api_key=settings.azure_openai.api_key,
-                api_version=settings.azure_openai.api_version,
-            )
+            import cohere
+            self._embedding_client = cohere.Client(api_key=settings.cohere.api_key)
         return self._embedding_client
 
     async def generate_embedding(self, text: str) -> List[float]:
-        """Generate an embedding vector for the given text using Azure OpenAI."""
+        """Generate an embedding vector for the given text using Cohere."""
         client = self._get_embedding_client()
 
         start = time.time()
-        response = client.embeddings.create(
-            input=text,
-            model=settings.azure_openai.embedding_deployment,
-            dimensions=settings.azure_openai.embedding_dimensions,
+        response = client.embed(
+            texts=[text],
+            model=settings.cohere.embedding_model,
+            input_type="search_document"
         )
         latency = (time.time() - start) * 1000
-        embedding = response.data[0].embedding
+        embedding = response.embeddings[0]
 
         logger.log_llm_call(
-            model=settings.azure_openai.embedding_deployment,
-            input_tokens=response.usage.prompt_tokens if response.usage else 0,
+            model=settings.cohere.embedding_model,
+            input_tokens=0,
             output_tokens=0,
             latency_ms=latency,
         )

@@ -7,7 +7,7 @@ import time
 from typing import Any, Dict
 
 from app.state.agent_state import AgentState, add_log_entry
-from app.utils.azure_llm import get_openai_client
+from app.utils.llm import get_openai_client
 from app.utils.config import settings
 from app.utils.logger import get_logger
 
@@ -217,7 +217,7 @@ Analyze this request and produce your strategy as a JSON object."""
             try:
                 start = time.time()
                 response = client.chat.completions.create(
-                    model=settings.azure_openai.chat_deployment,
+                    model=settings.groq.chat_deployment,
                     messages=[
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_message},
@@ -231,7 +231,7 @@ Analyze this request and produce your strategy as a JSON object."""
                 content = response.choices[0].message.content.strip()
 
                 logger.log_llm_call(
-                    model=settings.azure_openai.chat_deployment,
+                    model=settings.groq.chat_deployment,
                     input_tokens=response.usage.prompt_tokens if response.usage else 0,
                     output_tokens=response.usage.completion_tokens if response.usage else 0,
                     latency_ms=latency,

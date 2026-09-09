@@ -6,25 +6,21 @@ from pydantic_settings import BaseSettings
 from pydantic import Field
 
 
-class AzureOpenAIConfig(BaseSettings):
-    """Azure OpenAI configuration."""
-    endpoint: str = Field(default="", alias="AZURE_OPENAI_ENDPOINT")
-    api_key: str = Field(default="", alias="AZURE_OPENAI_API_KEY")
-    api_version: str = Field(default="2024-06-01", alias="AZURE_OPENAI_API_VERSION")
-    chat_deployment: str = Field(default="gpt-4o", alias="AZURE_OPENAI_CHAT_DEPLOYMENT")
-    embedding_deployment: str = Field(default="text-embedding-3-small", alias="AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
-    embedding_dimensions: int = Field(default=1536, alias="AZURE_OPENAI_EMBEDDING_DIMENSIONS")
+class GroqConfig(BaseSettings):
+    """Groq API configuration."""
+    api_key: str = Field(default="", alias="GROQ_API_KEY")
+    chat_deployment: str = Field(default="llama3-70b-8192", alias="GROQ_CHAT_DEPLOYMENT")
 
     class Config:
         env_file = ".env"
         extra = "ignore"
 
 
-class AzureSearchConfig(BaseSettings):
-    """Azure AI Search configuration."""
-    endpoint: str = Field(default="", alias="AZURE_SEARCH_ENDPOINT")
-    api_key: str = Field(default="", alias="AZURE_SEARCH_API_KEY")
-    index_name: str = Field(default="knowledge-index", alias="AZURE_SEARCH_INDEX_NAME")
+class CohereConfig(BaseSettings):
+    """Cohere API configuration for embeddings."""
+    api_key: str = Field(default="", alias="COHERE_API_KEY")
+    embedding_model: str = Field(default="embed-english-v3.0", alias="COHERE_EMBEDDING_MODEL")
+    embedding_dimensions: int = Field(default=1024, alias="COHERE_EMBEDDING_DIMENSIONS")
 
     class Config:
         env_file = ".env"
@@ -130,8 +126,8 @@ class Settings:
 
     def __init__(self):
         self.app = AppConfig()
-        self.azure_openai = AzureOpenAIConfig()
-        self.azure_search = AzureSearchConfig()
+        self.groq = GroqConfig()
+        self.cohere = CohereConfig()
         self.azure_blob = AzureBlobConfig()
         self.azure_doc_intelligence = AzureDocIntelligenceConfig()
         self.azure_speech = AzureSpeechConfig()
@@ -139,11 +135,11 @@ class Settings:
         self.whapi = WhapiConfig()
         self.twilio = TwilioConfig()
 
-    def validate_azure_services(self) -> dict:
-        """Check which Azure services are configured and return status."""
+    def validate_core_services(self) -> dict:
+        """Check which core services are configured and return status."""
         status = {
-            "azure_openai": bool(self.azure_openai.endpoint and self.azure_openai.api_key),
-            "azure_search": bool(self.azure_search.endpoint and self.azure_search.api_key),
+            "groq": bool(self.groq.api_key),
+            "cohere": bool(self.cohere.api_key),
             "azure_blob": bool(self.azure_blob.connection_string),
             "azure_doc_intelligence": bool(
                 self.azure_doc_intelligence.endpoint and self.azure_doc_intelligence.api_key
@@ -153,8 +149,8 @@ class Settings:
 
     def is_production_ready(self) -> bool:
         """Check if all critical services are configured."""
-        status = self.validate_azure_services()
-        return all(status.values())
+        status = self.validate_core_services()
+        return status["groq"] and status["cohere"]
 
 
 # Global singleton

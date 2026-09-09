@@ -8,8 +8,7 @@ from typing import Any, Dict, List
 
 from app.memory.memory_manager import MemoryManager
 from app.state.agent_state import AgentState, add_log_entry
-from app.utils.azure_llm import get_openai_client
-from app.utils.azure_search import azure_search
+from app.utils.llm import get_openai_client
 from app.utils.config import settings
 from app.utils.logger import get_logger
 
@@ -35,7 +34,7 @@ class RetrieverAgent:
 
         try:
             response = client.chat.completions.create(
-                model=settings.azure_openai.chat_deployment,
+                model=settings.groq.chat_deployment,
                 messages=[
                     {
                         "role": "system",
@@ -98,13 +97,16 @@ class RetrieverAgent:
 
         for eq in expanded_queries:
             try:
-                results = await azure_search(
+                # generate embedding for the expanded query
+                embedding = await self.memory.generate_embedding(eq)
+                results = await self.memory.vector_db.search(
                     query=eq,
-                    top=settings.app.top_k_results,
+                    query_embedding=embedding,
+                    top_k=settings.app.top_k_results,
                     user_id=user_id,
                 )
             except Exception as e:
-                logger.error(f"Azure search failed: {e}", event_type="azure_search_error")
+                logger.error(f"Vector search failed: {e}", event_type="vector_search_error")
                 results = []
             for r in results:
                 chunk_id = r.get("id", "")

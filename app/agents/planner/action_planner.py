@@ -8,7 +8,7 @@ import uuid
 from typing import Any, Dict, List
 
 from app.state.agent_state import AgentState, add_log_entry
-from app.utils.azure_llm import get_openai_client
+from app.utils.llm import get_openai_client
 from app.utils.config import settings
 from app.utils.logger import get_logger
 
@@ -141,7 +141,7 @@ Convert these tasks into precise tool call instructions."""
             )
 
             response = client.chat.completions.create(
-                model=settings.azure_openai.chat_deployment,
+                model=settings.groq.chat_deployment,
                 messages=[
                     {"role": "system", "content": prompt},
                     {"role": "user", "content": user_message},

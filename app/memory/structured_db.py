@@ -594,3 +594,20 @@ class StructuredDB:
             await session.commit()
 
             return {"user_id": user_id, "preferences": user.preferences}
+
+from pgvector.sqlalchemy import Vector
+
+class DocumentChunk(Base):
+    __tablename__ = 'document_chunks'
+
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    document_id = Column(String, ForeignKey('documents.id'), nullable=False)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
+    content = Column(Text, nullable=False)
+    embedding = Column(Vector(1024))  # Cohere embed-english-v3.0 is 1024 dims
+    topic = Column(String(255), default='general')
+    source_filename = Column(String(500), default='')
+    chunk_index = Column(Integer, default=0)
+    page_number = Column(Integer, default=0)
+    section_heading = Column(String(500), default='')
+    created_at = Column(DateTime, default=lambda: datetime.utcnow())

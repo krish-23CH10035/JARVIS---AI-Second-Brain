@@ -47,12 +47,8 @@ def _pick_tts_voice(requested_voice: str) -> str:
 
     return "en-US-GuyNeural"
 
-try:
-    import azure.cognitiveservices.speech as speechsdk
-    _HAS_SPEECH_SDK = True
-except ImportError:
-    speechsdk = None
-    _HAS_SPEECH_SDK = False
+speechsdk = None
+_HAS_SPEECH_SDK = False
 
 
 def _get_speech_config():

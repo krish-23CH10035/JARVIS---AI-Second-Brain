@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 from app.memory.memory_manager import MemoryManager
 from app.state.agent_state import AgentState, add_log_entry
 from app.toolbox.toolbox import Toolbox
-from app.utils.azure_llm import get_openai_client
+from app.utils.llm import get_openai_client
 from app.utils.config import settings
 from app.utils.logger import get_logger
 
@@ -121,7 +121,7 @@ class ExecutorAgent:
             return raw_results
         try:
             response = client.chat.completions.create(
-                model=settings.azure_openai.chat_deployment,
+                model=settings.groq.chat_deployment,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.5,
                 max_tokens=300,
@@ -181,7 +181,7 @@ class ExecutorAgent:
         try:
             start = time.time()
             response = client.chat.completions.create(
-                model=settings.azure_openai.chat_deployment,
+                model=settings.groq.chat_deployment,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4,
                 max_tokens=800,
@@ -189,7 +189,7 @@ class ExecutorAgent:
             latency = (time.time() - start) * 1000
 
             logger.log_llm_call(
-                model=settings.azure_openai.chat_deployment,
+                model=settings.groq.chat_deployment,
                 input_tokens=response.usage.prompt_tokens if response.usage else 0,
                 output_tokens=response.usage.completion_tokens if response.usage else 0,
                 latency_ms=latency,
